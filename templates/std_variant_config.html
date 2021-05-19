@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row" style="margin-bottom: 0px;">
+  <div class="col l12">
+    <h4 class="white-text">Standard Variant Settings  : <span style="font-size: 1.5rem;">{{var_name}}</span></h4>
+  </div>
+</div>
+<div class="divider"></div>
+
+<div id="sw_config">
+
+  <!-- Software configuration-->
+  <form action = "{{url_for('uploader')}}" method = "POST"  enctype = "multipart/form-data">
+  <div class="row valign-wrapper" style="margin: 10px;">
+    <div class="col l5" style="margin: initial;">
+      <div class="file-field input-field">
+        <div class="btn blue darken-3">
+          <span>File</span>
+          <input type="file" name="file" accept="image/x-png,image/gif,image/jpeg">
+        </div>
+        <div class="file-path-wrapper">
+          <input class="file-path validate" type="text" placeholder="Upload the standard Image">
+        </div>
+      </div>
+    </div>
+    <div class="col l3">
+      <button type="submit" class="btn-small blue darken-3 waves-effect waves-light"><i class="material-icons white-text">input</i></button>
+      <button id="btn_crop" type="button" class="btn-small blue darken-3 waves-effect waves-light"><i class="material-icons white-text">crop</i></button>
+    </div>
+    <div class="col l4" style="text-align: end;">
+      <button id="btn_save" type="button" class="btn-small green darken-3 waves-effect waves-light"><i class="material-icons white-text">save</i></button>
+      <button id="btn_update" type="button" class="btn-small orange darken-3 waves-effect waves-light"><i class="material-icons white-text">update</i></button>
+      <button id="btn_clear" type="button" class="btn-small red darken-3 waves-effect waves-light"><i class="material-icons white-text">clear</i></button>
+    </div>
+  </div>
+  </form>
+
+
+  <div class="row">
+    <div class="col l8" style="padding: 10px;">
+      <img id="org_image" src="data:image/jpeg;base64,{{img}}" alt="no img" style="border:3px solid #a7a7a7; ">
+    </div>
+
+    <div class="col l3">
+      <span>
+
+        {% if msg == 0 %}
+        <p style="color:red">Image not selected</p>
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="col 14 config_table">
+      <table class="table" id="csv_tbl" style="color:white">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Label</th>
+            <th>ROI</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+
+
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<a href="{{url_for('variant_config')}}" class="btn green darken-3 right" style="margin-left: 10px;">Next</a>
+
+{% endblock %}
+
+{% block foot_js %}
+<link rel="stylesheet" href="static/css/jquery-ui.css">
+<script src="static/js/jquery_ui.js"></script>
+<link rel="stylesheet" type="text/css" href="static/css/imgareaselect-default.css" />
+<script type="text/javascript" src="static/js/jquery.imgareaselect.pack.js"></script>
+<script type="text/javascript" src="static/js/socketio.js"></script>
+<script src="static/js/myjs/sweetalert.js"></script>
+<script src="static/js/std_variant_config.js"></script>
+
+{% endblock %}

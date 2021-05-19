@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col l12">
+    <h4 class="white-text">Diagnostics</h4>
+    <div class="divider"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col l12">
+    <div class="container" style="margin: 0px;">
+
+      <ul class="collapsible">
+        <!-- <li>
+          <div class="collapsible-header"><i class="material-icons">pageview</i>Error Proofing Model</div>
+          <div class="collapsible-body white">
+            <div class="row">
+              <div class="col l4 input-field" style="margin: 0px;">
+                <select id="select_variant" class="icons">
+                  <option value="" disabled selected>Choose Variant</option>
+                  {% for vnm in var_name %}
+                  <option value="{{vnm}}" data-icon="" class="left">{{vnm}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col l4">
+                <a id="btn_start" class="waves-effect waves-light btn green"><i class="material-icons left" style="margin: 0px;">timer</i></a>
+              </div>
+              <div class="col l3">
+                <h5>Features</h5>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col l8">
+                <div class="container" style="background-color: white; height: 500px; width: 100%;">
+                  <img id="cam_img" src="#" alt="" style="height: 100%; width:100%;border:3px solid #a7a7a7;">
+                </div>
+              </div>
+              <div class="col l4">
+                <table class="highlight" id= "result_tbl">
+                  <thead style="background-color:black">
+                    <tr style="font-size:20px">
+                      <th class="white-text">Class</th>
+                      <th class="white-text">Std. Count</th>
+                      <th class="white-text">Missing</th>
+
+                    </tr>
+                  </thead>
+
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </li> -->
+
+        <li>
+          <div class="collapsible-header"><i class="material-icons">desktop_windows</i>I/O Check <span id="plc_status" style="margin-left:50%;color:red"></span></div>
+          <div class="collapsible-body white">
+            <div class="row">
+              <div class="col l6">
+                <p>S1 sensor error : <span id="s1_error"></span></p>
+              </div>
+              <div class="col l6">
+                <p>S2 sensor error : <span id="s2_error"></span></p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>S3 sensor error : <span id="s3_error"></span></p>
+              </div>
+              <div class="col l6">
+                <p>VFD Error : <span id="vfd_error"></span></p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Conveyor status : <span id="conv_status"></span></p>
+              </div>
+              <div class="col l6">
+                <p>Top clamp status : <span id="top_clamp_status"></span></p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Guide clamp status : <span id="guide_clamp_status"></span></p>
+              </div>
+              <div class="col l6">
+                <p>Tower lamp status : <span id="tower_lamp_status"></span></p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Encoder error : <span id="encoder_error"></span></p>
+              </div>
+              <div class="col l6">
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Camera Status : <span id="cam_status"></span></p>
+              </div>
+              <div class="col l6">
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Auto cycle : <span id="auto_cycle"></span></p>
+              </div>
+              <div class="col l6">
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col l6">
+                <p>Emergency : <span id="emergency"></span></p>
+              </div>
+              <div class="col l6">
+
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="collapsible-header" id="error_log"><i class="material-icons">dvr</i>Error log</div>
+          <div class="collapsible-body white">
+
+                <div id="log_detail" class="" style="height:400px;width:100%;background:black;overflow:auto;color:#ffb1a7">
+
+                </div>
+
+
+          </div>
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block foot_js %}
+
+<script type="text/javascript" src="static/js/socketio.js"></script>
+
+<script src="static/js/diagnosis.js"></script>
+
+{% endblock %}

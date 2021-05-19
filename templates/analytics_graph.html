@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block head_js %}
+
+{% endblock %}
+{% block content %}
+
+<div class="fixed-action-btn">
+  <a class="btn-floating btn-large red" href="#on_top">
+    <i class="waves-effect large material-icons orange darken-2">arrow_upward</i>
+  </a>
+</div>
+
+<div class="row" id="on_top">
+  <div class="col l3">
+    <h4 class="white-text">Analytics</h4>
+  </div>
+  <div class="col l4 input-field" >
+    <input style="color:white" type="text" class="datepicker" id="selected_date">
+    <label for="fromdate">Date</label>
+  </div>
+  <div class="col l1">
+    <h4>
+    <button type="button" id="btn_search" name="btn_search" class="btn green darken-3 right"><i class="material-icons">search</i></button>
+  </h4>
+  </div>
+
+</div>
+<div id="graph_container" class="row white">
+       <div id="graph"> </div>
+</div>
+
+
+{% endblock %}
+
+{% block foot_js %}
+<!-- <script type="text/javascript" src="static/js/html2canvas.js"></script> -->
+<script type="text/javascript" src="static/js/myjs/jspdf/libs/sprintf.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/jspdf.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/libs/base64.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/jspdf.debug.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/faker.min.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/jspdf.plugin.autotable.js"></script>
+<script type="text/javascript" src="static/js/myjs/jspdf/examples.js"></script>
+<script type="text/javascript" src="static/js/socketio.js"></script>
+
+<script src="static/js/highcharts.js"></script>
+<script src="static/js/exporting.js"></script>
+<script src="static/js/accessibility.js"></script>
+<script src="static/js/loadingoverlay.min.js"></script>
+<script src="static/js/analytics_graph.js"></script>
+<!-- <script src="static/js/pagination.js"></script> -->
+{% endblock %}

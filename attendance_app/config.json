@@ -1,0 +1,16 @@
+{
+    "client":{
+      "ip":"0.0.0.0:5000",
+      "send_image":"skt_img_request",
+      "receive_data":"",
+      "logfile":"app.log",
+      "response_time_out":10
+
+    },
+    "camera": {
+       "cam_source": 0,
+       "side": "front"
+    }
+
+
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+    {% include "css.html" %}
+    <style>
+    div.scrollmenu {
+      overflow: auto;
+      white-space: nowrap;
+    }
+    </style>
+    {% block head_js %}
+    {% endblock %}
+    <meta charset="utf-8">
+    <title>Varroc Seat Inspection</title>
+
+    <script>
+  function startTime() {
+    var today = new Date();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    var y = today.getFullYear();
+    var mon = today.getMonth() + 1;
+    var d = today.getDate();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('time').innerHTML =
+    h + ":" + m + ":" + s + " | " + d + "-" + mon + "-" + y;
+    var t = setTimeout(startTime, 500);
+  }
+  function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+  }
+</script>
+
+  </head>
+
+  <body  onload="startTime()">
+
+    <!-- header -->
+  <div class="navbar-fixed">
+    <nav>
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo">y.ai</a>
+        <span class="brand-logo center" id="time" style="font-size: 1rem;">00:00</span>
+        <a href="#" class="btn-small red black-text right" style="margin: 15px;">logout</a>
+        <ul class="right">
+          <li><b>Username</b></li>
+          <li style="font-size: 0.9rem;">user@email.com</li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+
+  <!-- side navigation -->
+  <ul class="sidenav sidenav-fixed">
+    <li><a href="{{ url_for('variant_select')}}" class="tooltipped" data-position="right" data-tooltip="Inspection" style="padding: 10px"><i class="small material-icons white-text">search</i></a></li>
+    <li><a href="{{ url_for('user')}}" class="tooltipped" data-position="right" data-tooltip="Settings" style="padding: 10px"><i class="small material-icons white-text">people</i></a></li>
+    <li><a href="#!" class="tooltipped" data-position="right" data-tooltip="Diagnosis" style="padding: 10px"><i class="small material-icons white-text">healing</i></a></li>
+    <li><a href="{{ url_for('config') }}" class="tooltipped" data-position="right" data-tooltip="Configuration" style="padding: 10px"><i class="small material-icons white-text">settings</i></a></li>
+    <li><a href="#!" class="tooltipped" data-position="right" data-tooltip="Help & Support" style="padding: 10px"><i class="small material-icons white-text">help_outline</i></a></li>
+  </ul>
+
+
+    <div class="container" style="padding-left: 40px;">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+
+    <!-- Importing js files -->
+
+  {% include "js.html" %}
+    <script>
+          $(document).ready(function(){
+            $('.modal').modal();
+          });
+        </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('.tooltipped').tooltip();
+
+      });
+    </script>
+    <script>
+      $('.dropdown-trigger').dropdown();
+    </script>
+    <script>
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
+  </script>
+  <script>
+  $(document).ready(function(){
+    $('.datepicker').datepicker({
+    selectMonths: true, // Creates a dropdown to control month
+    selectYears: 15, // Creates a dropdown of 15 years to control year
+    format: 'yyyy-mm-dd' });
+
+  });
+  </script>
+
+
+    {% block foot_js %}
+    {% endblock %}
+
+  </body>
+
+</html>

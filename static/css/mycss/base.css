@@ -1,0 +1,45 @@
+
+/* body {
+  background-color: #263238;
+}
+
+.nav-wrapper {
+  background-color: #171F23;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.sidenav {
+  background-color: #171F23;
+  width: 50px;
+  margin-top: 60px;
+}
+
+nav ul li {
+  float: none;
+  text-align: right;
+  height: 20px;
+} */
+
+body {
+  background-color: #263238;
+}
+
+.nav-wrapper {
+  background-color: #171F23;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.sidenav {
+  background-color: #171F23;
+  width:5%;
+  margin-top: 60px;
+  padding-top: 32px;
+}
+
+nav ul li {
+  float: none;
+  text-align: right;
+  height: 20px;
+}

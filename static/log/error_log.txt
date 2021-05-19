@@ -1,0 +1,3 @@
+2020-01-23 15:22:35.198771--'NoneType' object has no attribute 'shape'--error in variant select
+2020-01-23 15:22:48.125913--'NoneType' object has no attribute 'shape'--error in variant select
+2020-01-23 15:22:55.897971--'NoneType' object has no attribute 'shape'--error in variant select
