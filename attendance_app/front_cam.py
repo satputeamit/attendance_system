@@ -2,7 +2,7 @@ from attendance import Attendance
 
 if __name__=="__main__":
 
-    att = Attendance("config.json")
+    att = Attendance("config_cam_in.json")
     # att.generate_class().
     # f=att.generate_encode()
     # encode_list = np.load("encode/data.npy")

@@ -2,74 +2,25 @@
 {% block content %}
     <!-- Variant Selection module -->
     <div class="row">
-      <!-- Variant Selection : Buttons -->
-      <div class="col l5">
-          <h4 class="white-text">Inspection :<b> <span id="txt_variant_name" style="color:skyblue"></span></b> </h4>
-      </div>
-
-      <div class="col l3">
-        <h4><button type="button" id="btn_start" name="button" class="btn green" style="font-size: 1.5rem;float:right">Start</button></h4>
-        <h4><button type="button" id="btn_stop" name="button" class="btn red" style="font-size: 1.5rem;float:right;display:none">Stop</button></h4>
-      </div>
-      <div class="col l4">
-        <div class="col l5">
-            <h4 class="white-text">Result</h4>
-        </div>
-        <div class="col 3">
-          <h4><button type="button" id="btn_log_image" name="button" style="font-size: 1.5rem" class="btn red">Issue</button></h4>
-        </div>
-
-        <div class="col l3">
-          <h4><span style="font-size:16px" class="white-text" id="txt_status"></span></h4>
-        </div>
-      </div>
-
+        <br>
     <div class="row">
-      <div class="col l8">
+         <div class="col l6" style="color:white;font-size:30px">In Camera</div>
+         <div class="col l6" style="color:white;font-size:30px">Out Camera</div>
+    </div>
+    <div class="row">
+      <div class="col l6">
         <div class="container" style="background-color: white; height: 500px; width: 100%;">
-          <img id="cam_img" src="#" alt="" style="height: 100%; width:100%;border:3px solid #a7a7a7;">
+          <img id="cam_in1" src="http://127.0.0.1:5001/video_feed" alt="" style="height: 100%; width:100%;border:3px solid #a7a7a7;">
         </div>
       </div>
-      <div class="col l4">
-        <!-- <ul class="collection" id="collection_id" style="height: 500px; overflow-y: auto; border: none; margin: 0px;">
-        </ul> -->
-        <table class="highlight" id= "result_tbl">
-          <thead style="background-color:black">
-            <tr style="font-size:20px">
-              <th class="white-text">Class</th>
-              <th class="white-text">Std. Count</th>
-              <th class="white-text">Missing</th>
+      <div class="col l6">
+        <div class="container" style="background-color: white; height: 500px; width: 100%;">
+          <img id="cam_out1" src="http://127.0.0.1:5002/video_feed" alt="" style="height: 100%; width:100%;border:3px solid #a7a7a7;">
 
-            </tr>
-          </thead>
-
-          <tbody>
-
-          </tbody>
-        </table>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col l9">
 
-
-      <div class="col l4 valign-wrapper">
-        <img id="process_img" src="" alt="" style=" padding-top: 10px; padding-bottom: 5px; padding-right: 10px;"/><h5 id="process_name" class="white-text text-darken-1"></h5>
-      </div>
-
-      <div class="col l3">
-        <h5><span class="white-text">Total :&nbsp;</span><span id="id_total" class="white-text"></span></h5>
-      </div>
-
-      <div class="col l3">
-        <h5 ><span class="green-text" >Good :&nbsp;</span><span id="id_good" class="white-text"></span></h5>
-      </div>
-
-      <div class="col l2">
-      <h5 ><span class="red-text" >Bad :&nbsp;</span><span id="id_bad" class="white-text"></span></h5>
-      </div>
-    </div>
-    </div>
   </div>
 
 {% endblock %}

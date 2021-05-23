@@ -7,7 +7,7 @@
   {% block head_js %}
   {% endblock %}
   <meta charset="utf-8">
-  <title>Varroc Seat Inspection</title>
+  <title>Attendance System</title>
 
   <script>
   function startTime() {
@@ -39,7 +39,7 @@
   <div class="navbar-fixed">
     <nav>
       <div class="nav-wrapper">
-        <a href="{{url_for('welcome_screen')}}" class="brand-logo">y.ai</a>
+        <a href="{{url_for('welcome_screen')}}" class="brand-logo">[*]</a>
         <span class="brand-logo center" id="time" style="font-size: 1rem;">00:00</span>
         <ul class="right">
           <li><b><span id="logged_user">{{session["username"]}}</span></b></li>

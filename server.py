@@ -4,7 +4,8 @@ from flask import Flask,request,render_template,redirect,url_for,Response,sessio
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager,UserMixin,login_user,login_required,logout_user
-
+from engineio.payload import Payload
+Payload.max_decode_packets = 50
 
 import json
 import logging

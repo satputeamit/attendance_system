@@ -14,7 +14,7 @@ import webbrowser
 import base64
 from db_operations.mongo_operation import MyMongoDatabase
 
-mongo = MyMongoDatabase()
+mongo = MyMongoDatabase("server.json")
 
 var_feature_dict = {}
 checks_seats=[]
@@ -59,10 +59,17 @@ def report_graph():
     return render_template('permission.html')
 
 
-@server.socketio.on('skt_img_request')
-def skt_infer_result(data):
+@server.socketio.on('skt_img_request_cam_in')
+def skt_infer_result_1(data):
     try:
-        server.socketio.emit('skt_show_infer_result', {"image":data["img"]}, broadcast=True)
+        server.socketio.emit('skt_show_infer_result_1', {"image":data["img"]}, broadcast=True)
+    except Exception as e:
+        pass
+
+@server.socketio.on('skt_img_request_cam_out')
+def skt_infer_result_2(data):
+    try:
+        server.socketio.emit('skt_show_infer_result_2', {"image":data["img"]}, broadcast=True)
     except Exception as e:
         pass
 

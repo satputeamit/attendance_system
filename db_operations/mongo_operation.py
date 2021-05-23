@@ -1,31 +1,30 @@
-from server import *
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
 import datetime
+import json
+
 class MyMongoDatabase:
 
-    def __init__(self):
-        self.client = MongoClient(server.mongodb_confg["host"],server.mongodb_confg["port"])
-        self.mydb = self.client[server.mongodb_confg["database"]]
-        self.mycol = self.mydb[server.mongodb_confg["table"]]
+    def __init__(self,config):
+        with open(config, "r") as f:
+            _config = json.load(f)
+        _config= _config["mongodb"]
+        self.client = MongoClient(_config["host"],_config["port"])
+        self.mydb = self.client[_config["database"]]
+        self.mycol = self.mydb[_config["table"]]
         # self.users = self.mydb['user']
 
-    # def insert_user(self,*mydict):
-    #     password = generate_password_hash(mydict[1], method='pbkdf2:sha256')
-    #     id=self.users.insert_one({"_id":mydict[0],"password":password,"role":mydict[2]})
-    #
-    # def delete_user(self,user_name):
-    #     self.users.remove({"_id":user_name})
-    #
-    # def update_user(self,*mydict):
-    #     password = generate_password_hash(mydict[1],method='pbkdf2:sha256')
-    #     self.users.update({'_id':'mydict[0]'},{'$set':{'password':password,"role":mydic[2]}})
-
-    def insert_main_record(self,*mydict):
-        print("MONGO MYDICT::::::::::::::::::",mydict)
+    def insert_main_record(self, mydict):
+        print("MONGO MYDICT::::::::::::::::::", mydict)
         # time_stamp=datetime.datetime.now().strftime('%H:%M:%S')
-        id=self.mycol.insert_one({"variant_name":mydict[0],"timestamp":mydict[1],"status":mydict[2],"detail":mydict[3]})
+        id = self.mycol.insert_one(mydict)
 
+    def update_record(self, mydict):
+        print("Update dict :",mydict)
+        self.mycol.update_one(mydict["find_Q"], {"$set": mydict["update_Q"]})
+
+    def get_result(self, mydict):
+        return self.mycol.find_one(mydict["find_Q"])
 
     def insert_detail_record(self,*mydict):
         print("MONGO MYDICT::::::::::::::::::",mydict[3])

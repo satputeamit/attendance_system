@@ -1,0 +1,20 @@
+{
+    "client":{
+      "ip":"0.0.0.0:5000",
+      "send_image":"skt_img_request_cam_in",
+      "receive_data":"",
+      "logfile":"app.log",
+      "response_time_out":10
+
+    },
+    "camera": {
+       "cam_source": 0,
+       "side": "in",
+       "resize_by": 1,
+       "divide_by": 4
+
+    },
+    "socket": true
+
+
+}

@@ -7,17 +7,32 @@ import pandas as pd
 from base64 import b64encode,b64decode
 from ClientApi import Client
 import json
+from engineio.payload import Payload
+import sys
+import time
+import redis
+import pickle
+
+
+# appending a path
+sys.path.append('..')
+from db_operations.mongo_operation import MyMongoDatabase
+
+
+Payload.max_decode_packets = 50
 # path = "/home/amit/vision_project/attendance/attendance_app/images"
 # images =[]
 # classNames =[]
 # print(os.listdir())
 # myList = os.listdir(path)
 
-cl = Client("config.json")
-cl.connect_to_server()
+# cl = Client("config.json")
+# cl.connect_to_server()
 
 class Attendance:
     def __init__(self, config):
+        self.rds = redis.Redis(host='localhost', port=6379, db=0)
+        self.rds.set("todays_name_list",pickle.dumps([]))
         with open(config, "r") as f:
             _config = json.load(f)
         print(_config)
@@ -28,20 +43,26 @@ class Attendance:
         self.encodeListKnown = []
         self.today_file_name = self.file_name_generator()
         self.todays_name = []
-        self.cl = Client(config)
+        self.resize_by = _config["camera"].get("resize_by", 1)
+        self.divide_by = _config["camera"].get("divide_by", 4)
         self.cam_source = _config["camera"]["cam_source"]
         self.cam_side = _config["camera"]["side"]
-        self.cl.connect_to_server()
+        self.use_socket = _config["socket"]
+        if self.use_socket:
+            self.cl = Client(config)
+            self.cl.connect_to_server()
         try:
-            self.df = pd.read_csv("aresult/"+self.today_file_name)
+            self.df = pd.read_csv("result/"+self.today_file_name)
             self.todays_name = self.df["Name"].tolist()
+            self.rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
         except:
             with open("result/" + self.today_file_name, "w") as fw:
                 fw.write("Name,Time\n")
             self.df = pd.read_csv("result/" + self.today_file_name)
             self.todays_name = self.df["Name"].tolist()
+            self.rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
 
-
+        self.mongo = MyMongoDatabase("../server.json")
         print("==>",self.todays_name)
 
     def file_name_generator(self):
@@ -88,18 +109,58 @@ class Attendance:
         sec = dtime.second
         return str(hr)+":"+str(mint)+":"+str(sec)
 
-    def store_data(self,name):
-        if name not in self.todays_name:
-            self.todays_name.append(name)
+    def store_data(self, name):
+        name_list = pickle.loads(self.rds.get("todays_name_list"))
+        if name not in name_list:
+            # self.todays_name.append(name)
+            name_list.append(name)
+            name_list_dump = pickle.dumps(name_list)
+            self.rds.set("todays_name_list",name_list_dump)
+
             with open("result/" + self.today_file_name, "a") as fw:
                 fw.write(str(name)+","+self.get_time()+"\n")
+
+            info_dict = {
+                "name": name
+            }
+
+            if self.cam_side.lower() == "in":
+                info_dict["emp_in_time"] = datetime.now()
+                info_dict["emp_out_time"] = None
+            if self.cam_side.lower() == "out":
+                info_dict["emp_out_time"] = datetime.now()
+                info_dict["emp_in_time"] = None
+
+            self.mongo.insert_main_record(info_dict)
             print(self.todays_name)
+
+    def update_reocord(self, name):
+        info_dict = {}
+        info_dict["find_Q"] = {"name": name}
+        result = self.mongo.get_result(info_dict)
+
+        if self.cam_side.lower() == "in":
+            if result["emp_in_time"] is None:
+                info_dict["update_Q"] = {"emp_in_time": datetime.now()}
+                self.mongo.update_record(info_dict)
+        if self.cam_side.lower() == "out":
+            if result["emp_out_time"] is None:
+                info_dict["update_Q"] = {"emp_out_time": datetime.now()}
+                self.mongo.update_record(info_dict)
+            else:
+                if result["emp_out_time"] < datetime.now():
+                    info_dict["update_Q"] = {"emp_out_time": datetime.now()}
+                    self.mongo.update_record(info_dict)
+
 
     def stream_vdo(self):
         cap = cv2.VideoCapture(self.cam_source)
         while True:
             _, frame = cap.read()
-            r_frame = cv2.resize(frame, (0, 0), None, 0.25, 0.25)
+            _size = round(1/self.resize_by,2)
+            _dvd_by = round(1/self.divide_by,2)
+            frame = cv2.resize(frame, (0, 0), None, _size, _size)
+            r_frame = cv2.resize(frame, (0, 0), None, _dvd_by, _dvd_by)
             r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
 
             facesCurFrame = fr.face_locations(r_frame)
@@ -114,16 +175,43 @@ class Attendance:
                         name = self.classNames[matchIndex].upper()
                         self.store_data(name)
                         y1, x2, y2, x1 = faceLoc
-                        y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
+                        y1, x2, y2, x1 = y1 * self.divide_by, x2 * self.divide_by, y2 * self.divide_by, x1 * self.divide_by
                         cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 1)
                         cv2.putText(frame, name, (x1 + 6, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
             # resized_image = cv2.resize(img, (int(w / 4), int(h / 4)))
             strPhotoJpeg = img_to_b64(frame)
-            self.cl.send_image(strPhotoJpeg)
+            if self.use_socket:
+                self.cl.send_image(strPhotoJpeg)
             # cv2.imshow("vdo", frame)
             # cv2.waitKey(1)
+        return frame
 
+    def process_image(self, frame):
+        _size = round(1 / self.resize_by, 2)
+        _dvd_by = round(1 / self.divide_by, 2)
+        frame = cv2.resize(frame, (0, 0), None, _size, _size)
+        r_frame = cv2.resize(frame, (0, 0), None, _dvd_by, _dvd_by)
+        r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
+
+        facesCurFrame = fr.face_locations(r_frame)
+        encode_cur_frame = fr.face_encodings(r_frame, facesCurFrame)
+
+        for encodeFace, faceLoc in zip(encode_cur_frame, facesCurFrame):
+            matches = fr.compare_faces(self.encodeListKnown, encodeFace)
+            faceDist = fr.face_distance(self.encodeListKnown, encodeFace)
+            matchIndex = np.argmin(faceDist)
+            if matches[matchIndex]:
+                if faceDist[matchIndex] < 0.45:
+                    name = self.classNames[matchIndex].upper()
+                    self.store_data(name)
+                    self.update_reocord(name)
+                    y1, x2, y2, x1 = faceLoc
+                    y1, x2, y2, x1 = y1 * self.divide_by, x2 * self.divide_by, y2 * self.divide_by, x1 * self.divide_by
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                    cv2.putText(frame, name, (x1 + 6, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+        return frame
 
 def img2_to_str(img):
         imgencode = cv2.imencode('.jpg', img)[1]
