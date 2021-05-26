@@ -1,6 +1,6 @@
 Installation:[ubuntu 18.04]
 1. Install python 3
-2. Install libs usng following command:
+2. Install libs using following command:
     >> pip3 install -r req.txt
 3. Install MongoDB:
     steps:
@@ -13,7 +13,7 @@ Installation:[ubuntu 18.04]
                 - Click apply
                 - it will install mongo db
             4. Test:
-                - open terminal and type monog and hit enter.
+                - open terminal and type mongo and hit enter.
 
 4. Install redis server:
         steps:
@@ -29,6 +29,5 @@ Installation:[ubuntu 18.04]
         terminal_3>> python3 app.py
 
 Note:
-    for camera configuration you need to modify config_cam_in.json for "IN camera" and config_cam_out.jsonfor "OUT camera"
+    for camera configuration you need to modify config_cam_in.json for "IN camera" and config_cam_out.json for "OUT camera"
     If you have 2 web cams then change cam_source = 0 and cam_source = 1 resp.
-     
