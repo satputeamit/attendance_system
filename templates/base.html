@@ -39,7 +39,7 @@
   <div class="navbar-fixed">
     <nav>
       <div class="nav-wrapper">
-        <a href="{{url_for('welcome_screen')}}" class="brand-logo">[*]</a>
+        <a href="{{url_for('streamer')}}" class="brand-logo">[A]</a>
         <span class="brand-logo center" id="time" style="font-size: 1rem;">00:00</span>
         <ul class="right">
           <li><b><span id="logged_user">{{session["username"]}}</span></b></li>
@@ -51,9 +51,13 @@
 
   <!-- side navigation -->
   <ul class="sidenav sidenav-fixed">
+  <li>
+      <a href="{{ url_for('streamer')}}" class="tooltipped" data-position="right" data-tooltip="Stream"><i class="{% if active=='inspect' %}small material-icons green-text{% else %}small material-icons white-text{%endif %}">search</i></a>
+  </li>
     <li>
-      <a href="{{ url_for('help')}}" class="tooltipped" data-position="right" data-tooltip="Help & Support"><i class="{% if active=='help' %}small material-icons green-text{% else %}small material-icons white-text{%endif %}">help_outline</i></a>
+    <a href="{{ url_for('report')}}" class="tooltipped" data-position="right" data-tooltip="Report"><i class="{% if active=='analytics' %}small material-icons green-text{% else %}small material-icons white-text{%endif %}">description</i></a>
     </li>
+
    </ul>
 
 

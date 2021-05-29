@@ -7,21 +7,31 @@
     <div class="divider"></div>
   </div>
 </div>
-<div class="row" style="margin-top: 10px;">
+<div class="row white-text" style="margin-top: 10px; ">
+  <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Status</th>
+          </tr>
+        </thead>
 
-  <div class="col l3">
-    <div class="card small" style="height: 200px;">
-      <div class="card-image">
-        <img src="" alt="">
-      </div>
-      <div class="card-content" style="padding: 10px;">
-        <span class="card-title">Variant Name</span>
-      </div>
-      <div class="card-action">
-        <a href="#" class="green-text text-darken-3">ANALYTICS REPORT</a>
-      </div>
-    </div>
-  </div>
+        <tbody>
+         {% for item in result %}
+           <tr>
+            <td>{{item.name|title}}</td>
+             {% if item.value == 0%}
+                <td>Absent</td>
+             {% else %}
+                <td>Present</td>
+             {% endif %}
+
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+      </table>
 
 </div>
 

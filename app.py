@@ -17,8 +17,8 @@ from db_operations.mongo_operation import MyMongoDatabase
 mongo = MyMongoDatabase("server.json")
 
 var_feature_dict = {}
-checks_seats=[]
-cur_variant=""
+checks_seats = []
+cur_variant = ""
 
 
 def get_date_obj(date,time="00:00:00"):
@@ -42,8 +42,8 @@ def add_header(req):
 
 
 @server.app.route("/")
-def welcome_screen():
-    return render_template("inspect.html", home="active")
+def streamer():
+    return render_template("streamer.html", home="active")
 
 
 @server.app.route("/help")
@@ -52,11 +52,31 @@ def help():
     return render_template("home.html", active="help")
 
 
-@server.app.route("/report_graph")
-def report_graph():
-    if session['role']=="admin" or session['role']=="superadmin":
-        return render_template("report_graph.html", active="report_graph")
-    return render_template('permission.html')
+@server.app.route("/report")
+def report():
+    # r.set("loop","stop")
+    mongo.mycol = mongo.mydb["persons"]
+    result_dict = {}
+    _data = mongo.find_all()
+    for _d in _data:
+        name = _d.get("name", "").lower()
+        if name not in result_dict:
+            result_dict[name] = 0
+
+    mongo.mycol = mongo.mydb["result"]
+    data = mongo.find_all()
+
+    for i in data:
+        _name = i.get("name", "").lower()
+        if _name in result_dict:
+            result_dict[_name] = 1
+
+    # reformat
+    result_data = []
+    for _dct in result_dict.keys():
+        result_data.append({"name":_dct,"value":result_dict[_dct]})
+    print(result_data)
+    return render_template("report.html", result=result_data, active="report")
 
 
 @server.socketio.on('skt_img_request_cam_in')
@@ -66,6 +86,7 @@ def skt_infer_result_1(data):
     except Exception as e:
         pass
 
+
 @server.socketio.on('skt_img_request_cam_out')
 def skt_infer_result_2(data):
     try:
@@ -73,6 +94,7 @@ def skt_infer_result_2(data):
     except Exception as e:
         pass
 
+
 if __name__ == "__main__":
-    webbrowser.open_new_tab('http://127.0.0.1:5000')
+    # webbrowser.open_new_tab('http://127.0.0.1:5000')
     server.start()
