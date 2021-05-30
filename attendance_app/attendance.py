@@ -63,6 +63,7 @@ class Attendance:
             self.rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
 
         self.mongo = MyMongoDatabase("../server.json")
+        self.rds.set("reload",0)
         print("==>",self.todays_name)
 
     def file_name_generator(self):
@@ -100,6 +101,29 @@ class Attendance:
             encodeListKnown.append(encode)
         print("Encoding completed")
         np.save("encode/data.npy", np.asarray(encodeListKnown))
+        return encodeListKnown
+
+    def register_face(self, img, name):
+        data_path = "encode/data.npy"
+        className_path = "encode/className.txt"
+        encodeListKnown =[]
+        print("Encoding started")
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        encode = fr.face_encodings(img)[0]
+        encodeListKnown.append(encode)
+        print(encodeListKnown)
+        print("////////")
+        print(encode)
+        print("uuuuuuuuuuuuuuuuuu")
+
+        old_list = np.load(data_path)
+        print(type(old_list))
+        new_list = np.append(old_list, np.asarray(encodeListKnown), axis=0)
+        with open(className_path, "a") as f:
+            f.write(str(name)+",\n")
+        print("Encoding completed")
+        np.save("encode/data.npy", new_list)
+        cv2.imwrite("images/"+name+".jpg", img)
         return encodeListKnown
 
     def get_time(self):
