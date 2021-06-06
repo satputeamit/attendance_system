@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- Variant Selection module -->
+    <div class="row">
+        <br>
+    <div class="row">
+         <div style="color:white;font-size:30px">Registration Page</div>
+
+    </div>
+    <div class="row">
+      <div class="col l6">
+            <form action='{{ url_for("register_person")}}' method="post" enctype="multipart/form-data">
+                <label >Person Name:</label>
+                <input style="color:white" type="text" id="person_name" name="person_name" placeholder="Enter Name" required>
+                <label >Photo:</label>
+                <input type="file" id="image" name="image" placeholder="image" required>
+                <button type="submit">Register</button>
+            </form>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}
+{% block foot_js %}
+<link rel="stylesheet" href="static/css/jquery-ui.css">
+<script src="static/js/jquery_ui.js"></script>
+<script src="static/js/myjs/sweetalert.js"></script>
+<script type="text/javascript" src="static/js/socketio.js"></script>
+
+{% endblock %}

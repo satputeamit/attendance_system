@@ -5,7 +5,7 @@ import os
 from datetime import datetime
 import pandas as pd
 from base64 import b64encode,b64decode
-from ClientApi import Client
+# from ClientApi import Client
 import json
 from engineio.payload import Payload
 import sys
@@ -20,6 +20,7 @@ from db_operations.mongo_operation import MyMongoDatabase
 
 
 Payload.max_decode_packets = 50
+rds = redis.Redis(host='localhost', port=6379, db=0)
 # path = "/home/amit/vision_project/attendance/attendance_app/images"
 # images =[]
 # classNames =[]
@@ -31,12 +32,12 @@ Payload.max_decode_packets = 50
 
 class Attendance:
     def __init__(self, config):
-        self.rds = redis.Redis(host='localhost', port=6379, db=0)
-        self.rds.set("todays_name_list",pickle.dumps([]))
+
+        rds.set("todays_name_list",pickle.dumps([]))
         with open(config, "r") as f:
             _config = json.load(f)
         print(_config)
-        self.path = "images"
+        self.path = "../dataset/images"
         self.images = []
         self.classNames = []
         self.myList = os.listdir(self.path)
@@ -48,22 +49,22 @@ class Attendance:
         self.cam_source = _config["camera"]["cam_source"]
         self.cam_side = _config["camera"]["side"]
         self.use_socket = _config["socket"]
-        if self.use_socket:
-            self.cl = Client(config)
-            self.cl.connect_to_server()
+        # if self.use_socket:
+        #     self.cl = Client(config)
+        #     self.cl.connect_to_server()
         try:
             self.df = pd.read_csv("result/"+self.today_file_name)
             self.todays_name = self.df["Name"].tolist()
-            self.rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
+            rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
         except:
             with open("result/" + self.today_file_name, "w") as fw:
                 fw.write("Name,Time\n")
             self.df = pd.read_csv("result/" + self.today_file_name)
             self.todays_name = self.df["Name"].tolist()
-            self.rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
+            rds.set("todays_name_list", pickle.dumps(self.df["Name"].tolist()))
 
         self.mongo = MyMongoDatabase("../server.json")
-        self.rds.set("reload",0)
+        rds.set("reload",0)
         print("==>",self.todays_name)
 
     def file_name_generator(self):
@@ -80,11 +81,16 @@ class Attendance:
         return names.replace("\n","").split(",")
 
     def set_dataset(self,encode_path,class_name_path):
-        self.encodeListKnown = np.load(encode_path)
-        name = ""
-        with open(class_name_path, "r") as f:
-            names = f.read()
-        self.classNames = names.replace("\n","").split(",")
+        try:
+            self.encodeListKnown = np.load(encode_path)
+            name = ""
+            with open(class_name_path, "r") as f:
+                names = f.read()
+            self.classNames = names.replace("\n","").split(",")
+        except:
+            self.encodeListKnown = []
+            self.classNames = []
+
 
     def generate_class(self):
         for img in self.myList:
@@ -100,30 +106,7 @@ class Attendance:
             encode = fr.face_encodings(img)[0]
             encodeListKnown.append(encode)
         print("Encoding completed")
-        np.save("encode/data.npy", np.asarray(encodeListKnown))
-        return encodeListKnown
-
-    def register_face(self, img, name):
-        data_path = "encode/data.npy"
-        className_path = "encode/className.txt"
-        encodeListKnown =[]
-        print("Encoding started")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        encode = fr.face_encodings(img)[0]
-        encodeListKnown.append(encode)
-        print(encodeListKnown)
-        print("////////")
-        print(encode)
-        print("uuuuuuuuuuuuuuuuuu")
-
-        old_list = np.load(data_path)
-        print(type(old_list))
-        new_list = np.append(old_list, np.asarray(encodeListKnown), axis=0)
-        with open(className_path, "a") as f:
-            f.write(str(name)+",\n")
-        print("Encoding completed")
-        np.save("encode/data.npy", new_list)
-        cv2.imwrite("images/"+name+".jpg", img)
+        np.save("../dataset/encode/data.npy", np.asarray(encodeListKnown))
         return encodeListKnown
 
     def get_time(self):
@@ -134,12 +117,12 @@ class Attendance:
         return str(hr)+":"+str(mint)+":"+str(sec)
 
     def store_data(self, name):
-        name_list = pickle.loads(self.rds.get("todays_name_list"))
+        name_list = pickle.loads(rds.get("todays_name_list"))
         if name not in name_list:
             # self.todays_name.append(name)
             name_list.append(name)
             name_list_dump = pickle.dumps(name_list)
-            self.rds.set("todays_name_list",name_list_dump)
+            rds.set("todays_name_list",name_list_dump)
 
             with open("result/" + self.today_file_name, "a") as fw:
                 fw.write(str(name)+","+self.get_time()+"\n")
@@ -193,7 +176,12 @@ class Attendance:
             for encodeFace, faceLoc in zip(encode_cur_frame, facesCurFrame):
                 matches = fr.compare_faces(self.encodeListKnown, encodeFace)
                 faceDist = fr.face_distance(self.encodeListKnown, encodeFace)
-                matchIndex = np.argmin(faceDist)
+                print(faceDist)
+                try:
+                    matchIndex = np.argmin(faceDist)
+                except:
+                    matchIndex=None
+
                 if matches[matchIndex]:
                     if faceDist[matchIndex] < 0.45:
                         name = self.classNames[matchIndex].upper()
@@ -205,8 +193,8 @@ class Attendance:
 
             # resized_image = cv2.resize(img, (int(w / 4), int(h / 4)))
             strPhotoJpeg = img_to_b64(frame)
-            if self.use_socket:
-                self.cl.send_image(strPhotoJpeg)
+            # if self.use_socket:
+            #     self.cl.send_image(strPhotoJpeg)
             # cv2.imshow("vdo", frame)
             # cv2.waitKey(1)
         return frame
@@ -224,18 +212,20 @@ class Attendance:
         for encodeFace, faceLoc in zip(encode_cur_frame, facesCurFrame):
             matches = fr.compare_faces(self.encodeListKnown, encodeFace)
             faceDist = fr.face_distance(self.encodeListKnown, encodeFace)
-            matchIndex = np.argmin(faceDist)
-            if matches[matchIndex]:
-                if faceDist[matchIndex] < 0.45:
-                    name = self.classNames[matchIndex].upper()
-                    self.store_data(name)
-                    self.update_reocord(name)
-                    y1, x2, y2, x1 = faceLoc
-                    y1, x2, y2, x1 = y1 * self.divide_by, x2 * self.divide_by, y2 * self.divide_by, x1 * self.divide_by
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 1)
-                    cv2.putText(frame, name, (x1 + 6, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+            if len(faceDist) >0:
+                matchIndex = np.argmin(faceDist)
+                if matches[matchIndex]:
+                    if faceDist[matchIndex] < 0.45:
+                        name = self.classNames[matchIndex].upper()
+                        self.store_data(name)
+                        self.update_reocord(name)
+                        y1, x2, y2, x1 = faceLoc
+                        y1, x2, y2, x1 = y1 * self.divide_by, x2 * self.divide_by, y2 * self.divide_by, x1 * self.divide_by
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 1)
+                        cv2.putText(frame, name, (x1 + 6, y1 - 6), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
         return frame
+
 
 def img2_to_str(img):
         imgencode = cv2.imencode('.jpg', img)[1]

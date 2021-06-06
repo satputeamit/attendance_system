@@ -13,6 +13,7 @@ import shutil
 import webbrowser
 import base64
 from db_operations.mongo_operation import MyMongoDatabase
+from register import register_face
 
 mongo = MyMongoDatabase("server.json")
 
@@ -51,6 +52,19 @@ def help():
     # r.set("loop","stop")
     return render_template("home.html", active="help")
 
+@server.app.route("/register")
+def register():
+    return render_template("register.html", active="register")
+
+@server.app.route("/register_person", methods=["POST"])
+def register_person():
+    if request.method == "POST":
+        uploaded_file = request.files['image']
+        person_name = request.form.get("person_name")
+        frame = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
+        register_face(frame,person_name)
+        return "Your name is " + person_name
+    return render_template("register.html", active="register")
 
 @server.app.route("/report")
 def report():

@@ -8,7 +8,7 @@ import redis
 #initialize flask application
 app = Flask(__name__)
 att = Attendance("config_cam_in.json")
-att.set_dataset("encode/data.npy","encode/className.txt")
+att.set_dataset("../dataset/encode/data.npy","../dataset/encode/className.txt")
 #Create object of SocketIO
 socketio = SocketIO(app,async_mode="eventlet",async_handlers=True,cookie=None,max_http_buffer_size=300)
 rds = redis.Redis(host='localhost', port=6379, db=0)
@@ -18,7 +18,7 @@ def get_frame():
         cap = cv2.VideoCapture(att.cam_source)
         while True:
             if int(rds.get("reload")) == 1:
-                att.set_dataset("encode/data.npy", "encode/className.txt")
+                att.set_dataset("../dataset/encode/data.npy", "../dataset/encode/className.txt")
                 rds.set("reload", 0)
             #_, frame = camera.read()
             _, frame = cap.read()
