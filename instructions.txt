@@ -15,6 +15,13 @@ Installation:[ubuntu 18.04]
             4. Test:
                 - open terminal and type mongo and hit enter.
 
+            5.Create collections in MongoDB:
+                -open terminal and type following commands:
+                    >> mongo
+                    >> use Attendance
+                    >> db.createCollection("result")
+                    >> db.createCollection("persons")
+
 4. Install redis server:
         steps:
             1. Open synaptic and search redis and install it

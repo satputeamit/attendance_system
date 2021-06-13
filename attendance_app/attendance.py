@@ -102,7 +102,7 @@ class Attendance:
         encodeListKnown =[]
         print("Encoding started")
         for img in self.images:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             encode = fr.face_encodings(img)[0]
             encodeListKnown.append(encode)
         print("Encoding completed")
@@ -168,7 +168,7 @@ class Attendance:
             _dvd_by = round(1/self.divide_by,2)
             frame = cv2.resize(frame, (0, 0), None, _size, _size)
             r_frame = cv2.resize(frame, (0, 0), None, _dvd_by, _dvd_by)
-            r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
+            # r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
 
             facesCurFrame = fr.face_locations(r_frame)
             encode_cur_frame = fr.face_encodings(r_frame, facesCurFrame)
@@ -204,7 +204,7 @@ class Attendance:
         _dvd_by = round(1 / self.divide_by, 2)
         frame = cv2.resize(frame, (0, 0), None, _size, _size)
         r_frame = cv2.resize(frame, (0, 0), None, _dvd_by, _dvd_by)
-        r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
+        # r_frame = cv2.cvtColor(r_frame, cv2.COLOR_BGR2RGB)
 
         facesCurFrame = fr.face_locations(r_frame)
         encode_cur_frame = fr.face_encodings(r_frame, facesCurFrame)

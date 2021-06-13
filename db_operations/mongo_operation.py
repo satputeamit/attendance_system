@@ -40,29 +40,9 @@ class MyMongoDatabase:
         return self.mycol.find({key:value})
 
     def find_record_by_date(self,date):
-        return self.mycol.find({"timestamp":{'$gte':date}})
+        return self.mycol.find({"emp_in_time":{'$gte':date}})
 
     def find_record_between_date(self,from_date,to_date):
         # print("FROM TO DAte::::::::::::::::::::::::::::;",from_date,to_date)
-        return self.mycol.find({"timestamp":{'$gte':from_date,'$lte':to_date}})
+        return self.mycol.find({"emp_in_time":{'$gte':from_date,'$lte':to_date}})
 
-    def get_count_by_status(self,status):
-        return self.mycol.find({"status":status}).count()
-
-    def get_count_by_date(self,var_name,from_date,to_date):
-        return self.mycol.find({"variant_name":var_name,"timestamp":{'$gte':from_date,'$lte':to_date}}).count()
-
-    def get_count_between_date(self,status,from_date,to_date):
-        return self.mycol.find({"status":status,"timestamp":{'$gte':from_date,'$lte':to_date}}).count()
-
-    def get_variant_count_between_date(self,var_name,status,from_date,to_date):
-        return self.mycol.find({"variant_name":var_name,"status":status,"timestamp":{'$gte':from_date,'$lte':to_date}}).count()
-
-    def get_count_by_status_date(self,status,date):
-        return self.mycol.find({"status":status,"timestamp":{'$gte':date}}).count()
-
-    def get_count_by_status_date_label(self,status,date,label):
-        return self.mycol.find({"status":status,"date":str(date),"lable":label}).count()
-
-    def get_count_by_status_label(self,status,label):
-        return self.mycol.find({"status":status,"lable":label}).count()
